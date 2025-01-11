@@ -29,9 +29,7 @@ export const FilesList = () => {
             <div className="p-5 w-100 overflow-y-auto">
                 <h3 className="mb-4">Мои файлы</h3>
                 <div className="list-group">
-                    {fileList.length !== 0 ? fileList.map((file) => <ItemFile removeHandler={removeFile} file={file} dropDown={true} />) : <p>Пока нет файлов</p>}
-                    <ItemFile file={{ name: "fsdf", file_id: 1 }} dropDown={true} />
-
+                    {fileList.length !== 0 ? fileList.map((file) => <ItemFile key={file.file_id} removeHandler={removeFile} file={file} dropDown={true} />) : <p>Пока нет файлов</p>}
                 </div>
             </div>
         </div>

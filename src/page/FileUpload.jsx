@@ -1,10 +1,12 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AsideNav } from '../components/AsideNav'
 import { UrlProvider } from '..'
 
 export const FileUpload = () => {
     const url = useContext(UrlProvider)
+    const [sucFiles, setSucFiles] = useState([])
+
     return (
         <div className="d-flex" style={{ minHeight: "100vh" }}>
             <AsideNav />
@@ -22,18 +24,23 @@ export const FileUpload = () => {
                         onChange={(e) => {
                             e.preventDefault()
                             console.log(e.target.files[0])
-                            const formData = new FormData();
-                            formData.append("files[]", e.target.files)
-                            console.log(formData)
+                            const formData = new FormData()
+                            for (let i = 0; i < e.target.files.length; i++) {
+                                formData.append('files[]', e.target.files[i])
+                            }
+
                             fetch(`${url}/files`, {
                                 method: "POST",
                                 headers: {
-                                    "Content-Type": "multipart/form-data",
                                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                                 },
-                                data: formData
+                                body: formData
                             }).then(res => res.json())
-                                .then(data => console.log(data))
+                                .then(data => {
+                                    if (data) {
+                                        setSucFiles(data)
+                                    }
+                                })
                                 .catch(err => console.log(err))
                         }}
                         type="file"
@@ -57,26 +64,14 @@ export const FileUpload = () => {
                 {/* <!-- Upload Finished --> */}
                 <h3>Загруженные файлы</h3>
                 <div className="list-group">
-                    <a
-                        href="#"
-                        className="list-group-item list-group-item-success d-flex gap-2 py-2 align-items-center"
-                    ><span className="badge rounded-pill text-bg-success">Success</span>image-01.jpg</a
-                    >
-                    <a
-                        href="#"
-                        className="list-group-item list-group-item-success d-flex gap-2 py-2 align-items-center"
-                    ><span className="badge rounded-pill text-bg-success">Success</span>image-01.jpg</a
-                    >
-                    <a
-                        href="#"
-                        className="list-group-item list-group-item-success d-flex gap-2 py-2 align-items-center"
-                    ><span className="badge rounded-pill text-bg-success">Success</span>image-01.jpg</a
-                    >
-                    <a
-                        href="#"
-                        className="list-group-item list-group-item-success d-flex gap-2 py-2 align-items-center"
-                    ><span className="badge rounded-pill text-bg-success">Success</span>image-01.jpg</a
-                    >
+                    {sucFiles.map((file) => {
+                        return <a
+                            key={file.file_id}
+                            href="#"
+                            className="list-group-item list-group-item-success d-flex gap-2 py-2 align-items-center"
+                        ><span className={`badge rounded-pill ${file.success ? "text-bg-success" : "text-bg-error"}`}>{file.message}</span>{file.name}</a
+                        >
+                    })}
                 </div>
                 <Link className="d-flex align-items-center gap-1 mt-4" to="/files-list"
                 ><svg

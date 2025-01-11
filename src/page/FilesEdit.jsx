@@ -1,16 +1,48 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AsideNav } from '../components/AsideNav'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { UrlProvider } from '..'
 
 export const FilesEdit = () => {
+    const url = useContext(UrlProvider)
+    const { id } = useParams()
+    const [prevName, setPreName] = useState("старое название")
+    const [validErr, setValidErr] = useState(false)
+    useEffect(() => {
+        // fetch(`${url}/files/${id}`, {
+        //     method: "GET",
+        //     headers: {
+        //         "Authorization": `Bearer ${localStorage.getItem("token")}`
+        //     },
+        // }).then(res => res.json())
+        //     .then(data => console.log(data))
+        //     .catch(err => console.log(err))
+    }, [])
     return (
         <div className="d-flex" style={{ minHeight: "100vh" }}>
             <AsideNav />
             <div className="p-5 w-100 overflow-y-auto overflow-y-auto">
                 <h3 className="mb-4">Редактирование файла</h3>
                 <div>
-                    <h4 className="mb-3">Файл "id"</h4>
-                    <form className="needs-validation" novalidate="">
+                    <h4 className="mb-3">Файл {id}</h4>
+                    <form className="needs-validation" novalidate="" onSubmit={(e) => {
+                        e.preventDefault()
+                        if (prevName.trim() === "") {
+                            setValidErr(true)
+                        } else {
+                            fetch(`${url}/files/${id}`, {
+                                method: "PATCH",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                                },
+                                body: JSON.stringify({ name: prevName })
+                            }).then(res => res.json())
+                                .then(data => console.log(data))
+                                .catch(err => console.log(err))
+                            setValidErr(false)
+                        }
+                    }}>
                         <div className="row g-3 mb-4">
                             <div className="col-sm-6">
                                 <label for="fileName" className="form-label">Название</label>
@@ -19,10 +51,13 @@ export const FilesEdit = () => {
                                     className="form-control"
                                     id="fileName"
                                     placeholder=""
-                                    value="старое название"
+                                    value={prevName}
+                                    onChange={(e) => {
+                                        setPreName(e.target.value)
+                                    }}
                                     required=""
                                 />
-                                <div className="invalid-feedback">Valid file name is required.</div>
+                                <div style={{ display: validErr ? "block" : "none" }} className="invalid-feedback">Valid file name is required.</div>
                             </div>
                             <div className="col-sm-6 d-flex align-items-end">
                                 <button className="btn btn-primary" type="submit">Сохранить</button>

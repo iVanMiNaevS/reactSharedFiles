@@ -36,8 +36,8 @@ root.render(
             </PrivateRoute>}
           />
           <Route path="/files-shared" element={<PrivateRoute><FilesShared /></PrivateRoute>} />
-          <Route path="/files-access" element={<PrivateRoute><FilesAccess /></PrivateRoute>} />
-          <Route path="/files-edit" element={<PrivateRoute><FilesEdit /></PrivateRoute>} />
+          <Route path="/files-access/:id" element={<PrivateRoute><FilesAccess /></PrivateRoute>} />
+          <Route path="/files-edit/:id" element={<PrivateRoute><FilesEdit /></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </UrlProvider.Provider>

@@ -29,7 +29,17 @@ export const ItemFile = ({ removeHandler, file, dropDown = false }) => {
                 <div className="col">{file.name}</div>
                 <div className="col text-muted">{file.file_id}</div>
                 <div className="col d-flex justify-content-end">
-                    <button type="button" className="btn btn-light">
+                    <button type="button" className="btn btn-light" onClick={() => {
+                        fetch(`${url}/files/${file.file_id}`, {
+                            method: "GET",
+                            headers: {
+                                "Authorization": `Bearer ${localStorage.getItem("token")}`
+                            },
+                        }).then((res) => res.json()).then(data => {
+                            console.log(data)
+
+                        }).catch((data) => console.log(data))
+                    }}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
@@ -58,7 +68,7 @@ export const ItemFile = ({ removeHandler, file, dropDown = false }) => {
                             <li>
                                 <Link
                                     className="dropdown-item align-items-center d-flex gap-2"
-                                    to="/files-edit"
+                                    to={`/files-edit/${file.file_id}`}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +87,7 @@ export const ItemFile = ({ removeHandler, file, dropDown = false }) => {
                             <li>
                                 <Link
                                     className="dropdown-item align-items-center d-flex gap-2"
-                                    to="/files-access"
+                                    to={`/files-access/${file.file_id}`}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

@@ -1,16 +1,43 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { UserItem } from '../components/UserItem'
 import { AsideNav } from '../components/AsideNav'
+import { useParams } from 'react-router-dom'
+import { UrlProvider } from '..'
 
 export const FilesAccess = () => {
+    const url = useContext(UrlProvider)
+    const { id } = useParams()
+    const [validErr, setValidErr] = useState(false)
+    const [email, setEmail] = useState("")
     return (
         <div className="d-flex" style={{ minHeight: "100vh" }}>
             <AsideNav />
             <div className="p-5 w-100 overflow-y-auto overflow-y-auto">
                 <h3 className="mb-4">Права доступа</h3>
                 <div>
-                    <h4 className="mb-3">Предоставить доступ к файлу "id"</h4>
-                    <form className="needs-validation mb-4" novalidate="">
+                    <h4 className="mb-3">Предоставить доступ к файлу {id}</h4>
+                    <form className="needs-validation mb-4" novalidate="" onSubmit={(e) => {
+                        e.preventDefault()
+                        if (email.trim() === "") {
+                            setValidErr(true)
+                        } else {
+
+                            fetch(`${url}/files/${id}/accesses`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                                },
+                                body: JSON.stringify({ email: email })
+                            }).then(res => res.json())
+                                .then(data => {
+                                    console.log(data)
+                                })
+                                .catch(err => console.log(err))
+
+                            setValidErr(false)
+                        }
+                    }}>
                         <div className="row g-3 mb-3">
                             <div className="col-sm-6">
                                 <label for="email" className="form-label">Email пользователя</label>
@@ -19,9 +46,11 @@ export const FilesAccess = () => {
                                     className="form-control"
                                     id="email"
                                     placeholder="example@user.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     required=""
                                 />
-                                <div className="invalid-feedback">Valid email is required.</div>
+                                <div style={{ display: validErr ? "block" : "none" }} className="invalid-feedback">Valid email is required.</div>
                             </div>
                             <div className="col-sm-6 d-flex align-items-end">
                                 <button className="btn btn-primary" type="submit">Добавить</button>
