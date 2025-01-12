@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const UserItem = () => {
+export const UserItem = ({ user }) => {
     return (
         <li className="list-group-item align-items-center d-flex gap-3 py-3">
             <div
@@ -20,10 +20,10 @@ export const UserItem = () => {
                 </svg>
             </div>
             <div className="row w-100 align-items-center justify-content-betweeen">
-                <div className="col fw-bold">User Userov</div>
-                <div className="col text-muted">example@user.com</div>
+                <div className="col fw-bold">{user.fullname}</div>
+                <div className="col text-muted">{user.email}</div>
                 <div className="col d-flex justify-content-end">
-                    <button className="btn btn-danger" type="button">Отозвать</button>
+                    <button className="btn btn-danger" type="button" onClick={() => { }}>Отозвать</button>
                 </div>
             </div>
         </li>
