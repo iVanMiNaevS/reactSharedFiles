@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { UrlProvider } from '..'
+import { useParams } from 'react-router-dom'
 
-export const UserItem = ({ user }) => {
+export const UserItem = ({ user, fetchFiles }) => {
+    const url = useContext(UrlProvider)
+    const { id } = useParams()
     return (
         <li className="list-group-item align-items-center d-flex gap-3 py-3">
             <div
@@ -23,7 +27,18 @@ export const UserItem = ({ user }) => {
                 <div className="col fw-bold">{user.fullname}</div>
                 <div className="col text-muted">{user.email}</div>
                 <div className="col d-flex justify-content-end">
-                    <button className="btn btn-danger" type="button" onClick={() => { }}>Отозвать</button>
+                    <button className="btn btn-danger" type="button" onClick={() => {
+                        fetch(`${url}/files/${id}/accesses`, {
+                            method: 'DELETE',
+                            headers: [
+                                ['Accept', 'application/json'],
+                                ['Content-Type', 'application/json'],
+                                ['Authorization', `Bearer ${localStorage.getItem('token')}`]
+                            ],
+                            body: JSON.stringify({ email: user.email })
+                        })
+                            .then(fetchFiles)
+                    }}>Отозвать</button>
                 </div>
             </div>
         </li>

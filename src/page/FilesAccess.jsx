@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { UserItem } from '../components/UserItem'
 import { AsideNav } from '../components/AsideNav'
 import { useParams } from 'react-router-dom'
@@ -10,6 +10,23 @@ export const FilesAccess = () => {
     const [validErr, setValidErr] = useState(false)
     const [email, setEmail] = useState("")
     const [listUsers, setListUsers] = useState([])
+    function fetchFiles() {
+        fetch(`${url}/files/disk`, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((res) => res.json())
+            .then((files) => files.find((f) => f.file_id == id))
+            .then(file => {
+                const userNotAuthor = file.accesses.filter((el) => el.type !== "author")
+                setListUsers(userNotAuthor)
+            })
+    }
+    useEffect(() => {
+        fetchFiles()
+    }, [])
     return (
         <div className="d-flex" style={{ minHeight: "100vh" }}>
             <AsideNav />
@@ -71,7 +88,7 @@ export const FilesAccess = () => {
                     </form>
                     <h4 className="mb-3">Пользователи, имеющие доступ</h4>
                     <ul className="list-group mb-4">
-                        {listUsers.map(user => <UserItem key={user.email} user={user} />)}
+                        {listUsers.map(user => <UserItem key={user.email} user={user} fetchFiles={fetchFiles} />)}
                     </ul>
                     <a className="d-flex align-items-center gap-1" href="/files-list"
                     ><svg

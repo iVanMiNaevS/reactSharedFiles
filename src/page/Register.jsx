@@ -11,7 +11,7 @@ export const Register = () => {
     const [email, setEmail] = useState("")
 
     return (
-        <div className="d-flex   justify-content-center align-items-center px-4">
+        <div className="d-flex  justify-content-center align-items-center px-4">
             <div style={{ maxWidth: "600px" }}>
                 <main>
                     <div className="mb-5 text-center">

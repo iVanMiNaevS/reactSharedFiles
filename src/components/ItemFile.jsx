@@ -30,13 +30,17 @@ export const ItemFile = ({ removeHandler, file, dropDown = false }) => {
                 <div className="col text-muted">{file.file_id}</div>
                 <div className="col d-flex justify-content-end">
                     <button type="button" className="btn btn-light" onClick={() => {
-                        fetch(`${url}/files/${file.file_id}`, {
+                        fetch(`${file.url}`, {
                             method: "GET",
                             headers: {
                                 "Authorization": `Bearer ${localStorage.getItem("token")}`
                             },
-                        }).then((res) => res.json()).then(data => {
-                            console.log(data)
+                        }).then((res) => res.blob()).then(data => {
+                            let url = window.URL.createObjectURL(data)
+                            let a = document.createElement('a')
+                            a.href = url
+                            a.download = file.name
+                            a.click()
 
                         }).catch((data) => console.log(data))
                     }}>
